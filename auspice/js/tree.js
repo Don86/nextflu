@@ -216,6 +216,18 @@ d3.json(path + file_prefix + "tree.json", function(error, root) {
 		d.y = yScale(d.yvalue);
 	});
 
+	d3.select("#treeplot")
+		.on("dblclick", function(d) {
+			displayRoot = rootNode;
+			nDisplayTips = displayRoot.fullTipCount;
+			var dMin = d3.min(xValues),
+				dMax = d3.max(xValues),
+				lMin = d3.min(yValues),
+				lMax = d3.max(yValues);
+			rescale(dMin, dMax, lMin, lMax);
+			removeClade();
+		})
+
 	var clade_freq_event;
 	var link = treeplot.selectAll(".link")
 		.data(links)
@@ -245,7 +257,8 @@ d3.json(path + file_prefix + "tree.json", function(error, root) {
 					.style("fill", function (m){return d3.rgb(patch_color(m));});
 				}
 		})		
-		.on('click', function(d) {
+		.on('dblclick', function(d) {
+		    d3.event.stopPropagation();
 			if ((colorBy!="genotype")&(typeof addClade !="undefined")){
 				addClade(d);
 			}
@@ -362,6 +375,7 @@ d3.json(path + file_prefix + "tree.json", function(error, root) {
 			rescale(dMin, dMax, lMin, lMax);
 			removeClade();
 		})
+
 
 	function rescale(dMin, dMax, lMin, lMax) {
 
