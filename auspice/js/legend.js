@@ -1,5 +1,7 @@
 var legendRectSize = 15;
 var legendSpacing = 4;
+var selectedRegions = {};
+
 function makeLegend(){
 	
 	d3.select("#legend-title").text(function(d){
@@ -133,10 +135,18 @@ function make_map(){
             .style("fill", patch_color)
             .attr("d", path)
             .attr("class", "map_feature")
-            .on("mouseover",mouseOverMap)
-            .on("mouseout",mouseOutMap);
+            .on("click",function(d) { 
+				d3.event.stopPropagation();
+				selectRegion(d);
+			})
+			.on("mouseover",mouseOverMap)
+			.on("mouseout",mouseOutMap);
 
-        g.attr("transform", "translate(260,180) scale(" + 0.65 + ")");
+		svg.on("click", function(d) { 
+			clearMapSelection();
+		});
+		
+       g.attr("transform", "translate(260,180) scale(" + 0.65 + ")");
 
       g.append("path")
           .datum(topojson.mesh(locations, locations.objects.ebov, function(a, b) { return a !== b; }))
@@ -159,10 +169,52 @@ function patch_in_list(map_region, branch){
   return false;
 }
 
+function selectRegion(region) {
+	if (region in selectedRegions) {
+		console.log("deselect " + region);
+		treeplot.selectAll(".tip")
+				.filter(function (d){ return match_region(region, d);})
+            		.attr("r", function(d){return tipRadius;})
+                	.style("fill", tipFillColor);
+		legend.selectAll('.map_feature')
+			.filter(function (m) { return patch_region_name(m) == patch_region_name(region);})
+			.style("fill", function(m) {
+				return d3.rgb(patch_color(region));
+			});
+			
+		delete selectedRegions[region];
+	} else {
+		console.log("select " + region);
+		treeplot.selectAll(".tip")
+				.filter(function (d){ return match_region(region, d);})
+					.attr("r", function(d){return tipRadius*2;})
+					.style("fill", function (t) {
+					  return d3.rgb(tipFillColor(t)).brighter();
+					});
+		legend.selectAll('.map_feature')
+			.filter(function (m) { return patch_region_name(m) == patch_region_name(region);})
+			.style("fill", function(m) {
+				return d3.rgb(patch_color(region)).brighter();
+			});
+		 selectedRegions[region] = true;
+	}
+}
+
+function clearMapSelection(){
+    treeplot.selectAll(".tip")
+            	.attr("r", function(d){return tipRadius;})
+                .style("fill", tipFillColor);
+	legend.selectAll('.map_feature')
+		.style("fill", function(m) {
+			return d3.rgb(patch_color(region));
+		});
+	selectedRegions = {}          
+}
 
 function mouseOverMap(region){
 	console.log(region);
     mapTooltip.show(region);
+    /*
     treeplot.selectAll(".tip")
             .filter(function (d){ return match_region(region, d);})
                 .attr("r", function(d){return tipRadius*2;})
@@ -174,10 +226,12 @@ function mouseOverMap(region){
 		.style("fill", function(m) {
 			return d3.rgb(patch_color(region)).brighter();
 		});
+	*/
 }
 
 function mouseOutMap(region){
     mapTooltip.hide(region);
+    /*
     treeplot.selectAll(".tip")
             .filter(function (d){ return match_region(region, d);})
                 .attr("r", function(d){return tipRadius;})
@@ -187,4 +241,5 @@ function mouseOutMap(region){
 		.style("fill", function(m) {
 			return d3.rgb(patch_color(region));
 		});          
+	*/
 }
