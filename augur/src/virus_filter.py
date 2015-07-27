@@ -85,17 +85,26 @@ class virus_filter(object):
 				filtered_viruses.append(v)
 				self.strain_lookup[label]=v
 			else:
-				print "\tduplicate strain: " + v['strain']
-		self.viruses=filtered_viruses
+				print "\tduplicate strain: " + v['date']
+		self.viruses = filtered_viruses
 
 	def filter_length(self, min_length):
 		self.viruses = filter(lambda v: len(v['seq']) >= min_length, self.viruses)
 
 	def filter_date(self):
-		if self.date_spec=='full':
-			self.viruses = filter(lambda v: re.match(self.date_format['reg'], v['date']) != None, self.viruses)
-		elif self.date_spec=='year':
-			self.viruses = filter(lambda v: re.match(r'\d\d\d\d', v['date']) != None, self.viruses)
+		filtered_viruses = []
+		for v in self.viruses:
+			if self.date_spec=='full':
+				if (re.match(self.date_format['reg'], v['date']) != None):
+					filtered_viruses.append(v)
+				else:
+					print "\timprecise date: " + v['strain']
+			elif self.date_spec=='year':
+				if (re.match(r'\d\d\d\d', v['date']) != None):
+					filtered_viruses.append(v)
+				else:
+					print "\timprecise date: " + v['strain']					
+		self.viruses = filtered_viruses	
 
 	def subsample(self, viruses_per_month, prioritize = None, all_priority=False, region_specific = True):
 		'''
