@@ -61,17 +61,14 @@ class ebola_clean(virus_clean):
 		virus_clean.__init__(self, **kwargs)
 
 	def clean(self):
-		print "Number of viruses before cleaning:",len(self.viruses)
-		self.unique_date()
-		self.remove_insertions()
-		self.clean_ambiguous()
-		self.viruses.sort(key=lambda x:x.num_date)
+		self.unique_date()	
+		self.remove_insertions()	
+		self.clean_ambiguous()			
 		print "Number of viruses after cleaning:",len(self.viruses)
 
 class ebola_refine(tree_refine):
 	def refine(self):
 		self.refine_generic()
-
 
 class ebola_process(process, ebola_filter, ebola_clean, ebola_refine):
 	"""docstring for ebola, """
@@ -103,6 +100,7 @@ class ebola_process(process, ebola_filter, ebola_clean, ebola_refine):
 			self.load()
 		if 'align' in steps:
 			self.align()   	# -> self.viruses is an alignment object
+			self.dump()			
 		if 'clean' in steps:
 			print "--- Clean at " + time.strftime("%H:%M:%S") + " ---"
 			self.clean()   # -> every node as a numerical date
