@@ -40,7 +40,9 @@ class fitness_model(object):
 			if p == 'tol':
 				self.predictors.append(('tol',calc_tolerance,{}))
 			if p == 'geo':
-				self.predictors.append(('geo',calc_geo_fitness,{}))				
+				self.predictors.append(('geo',calc_geo_fitness,{}))	
+			if p == 'geo_spread':
+				self.predictors.append(('geo',calc_geo_spread,{}))								
 
 	def calc_tip_counts(self):
 		'''

@@ -163,7 +163,7 @@ def calc_LBI(tree, attr = 'lbi', tau=0.0005, transform = lambda x:x):
 
 def geo_fitness(region):
 	'''
-	Assign fitness based on historical geographic spread
+	Assign fitness based on geographic location
 	Numbers are from https://github.com/blab/global-migration/blob/master/geo/h3_large_geo/stats/h3_large_geo_origin.tsv
 	'''
 	fitness = 0.0
@@ -201,6 +201,29 @@ def calc_geo_fitness(tree, attr='geo'):
 				node.__setattr__(attr, geo_fitness(node.region))
 		tree.geo_fitness_assigned=True
 
+def calc_geo_spread(tree, attr='geo_spread', dist_threshold = 0.005):
+	'''
+	calculates the "geographic spread" of tree nodes
+	this is the geographic diversity of genetically similar nodes
+	tree   --   dendropy tree
+	attr   --   the attribute name used to save the result	
+	'''
+	if not hasattr(tree, "geo_spread_assigned") or tree.geo_spread_assigned==False:
+		pdm = dendropy.treecalc.PatristicDistanceMatrix(tree)
+		for node_i in tree.leaf_iter():
+			different_pro = 0.0
+			count = 0.0
+			for node_j in tree.leaf_iter():
+				if node_i != node_j and pdm(node_i.taxon, node_j.taxon) < dist_threshold:
+					if node_i.region != node_j.region:
+						different_pro += 1.0
+					count += 1.0
+			if count > 0:
+				different_pro /= count
+#			print different_pro, count
+			node_i.__setattr__(attr, different_pro)
+		tree.geo_spread_assigned=True	
+
 def main(tree_fname = 'data/tree_refine.json'):
 
 	print "--- Testing predictor evaluations ---"
@@ -217,6 +240,9 @@ def main(tree_fname = 'data/tree_refine.json'):
 
 	print "Calculating geo fitnesses"
 	calc_geo_fitness(tree)
+	
+	print "Calculating geo spread"
+	calc_geo_spread(tree)	
 
 	print "Writing decorated tree"
 	out_fname = "data/tree_predictors.json"
