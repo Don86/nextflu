@@ -9,6 +9,9 @@ from tree_util import dendropy_to_json
 from fitness_tolerance import load_mutational_tolerance, calc_fitness_tolerance
 
 epitope_mask = np.fromstring("00000000000000000000000000000000000000000000000000000000000011111011011001010011000100000001001011110011100110101000001100000100000001000110101011111101011010111110001010011111000101011011111111010010001111101110111001010001110011111111000000111110000000101010101110000000000011100100000001011011100000000000001001011000110111111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", dtype='S1')
+# shift left by 1 to improve fit. This should probably become baseline across the board.
+epitope_mask = np.fromstring("00000000000000000000000000000000000000000000000000000000000111110110110010100110001000000010010111100111001101010000011000001000000010001101010111111010110101111100010100111110001010110111111110100100011111011101110010100011100111111110000001111100000001010101011100000000000111001000000010110111000000000000010010110001101111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000", dtype='S1')
+
 
 def epitope_sites(aa):
 	aaa = np.fromstring(aa, 'S1')
@@ -47,7 +50,7 @@ def calc_epitope_distance(tree, attr='ep', ref = None):
 			node.__setattr__(attr, epitope_distance(node.aa, ref))
 		tree.epitope_distance_assigned=True
 
-def  calc_tolerance(tree, attr='tol'):
+def calc_tolerance(tree, attr='tol'):
 	'''
 	calculates the distance at epitope sites of any tree node  to ref
 	tree   --   dendropy tree
@@ -158,6 +161,45 @@ def calc_LBI(tree, attr = 'lbi', tau=0.0005, transform = lambda x:x):
 			tmp_LBI += child.up_polarizer
 		node.__setattr__(attr, transform(tmp_LBI))
 
+def geo_fitness(region):
+	'''
+	Assign fitness based on historical geographic spread
+	Numbers are from https://github.com/blab/global-migration/blob/master/geo/h3_large_geo/stats/h3_large_geo_origin.tsv
+	'''
+	fitness = 0.0
+	if region == "NorthAmerica":
+		fitness = 0.116
+	elif region == "SouthAmerica":
+		fitness = 0.041
+	elif region == "Europe":
+		fitness = 0.072
+	elif region == "India":
+		fitness = 0.170
+	elif region == "China":
+		fitness = 0.413
+	elif region == "JapanKorea":
+		fitness = 0.038
+	elif region == "SoutheastAsia":
+		fitness = 0.133
+	elif region == "Oceania":
+		fitness = 0.016
+	elif region == "WestAsia":
+		fitness = 0.0
+	elif region == "Africa":
+		fitness = 0.0
+	return fitness																
+
+def calc_geo_fitness(tree, attr='geo'):
+	'''
+	calculates the "geographic fitness" of any tree node
+	tree   --   dendropy tree
+	attr   --   the attribute name used to save the result
+	'''
+	if not hasattr(tree, "geo_fitness_assigned") or tree.geo_fitness_assigned==False:
+		for node in tree.postorder_node_iter():
+			if hasattr(node, 'region'):
+				node.__setattr__(attr, geo_fitness(node.region))
+		tree.geo_fitness_assigned=True
 
 def main(tree_fname = 'data/tree_refine.json'):
 
@@ -172,6 +214,9 @@ def main(tree_fname = 'data/tree_refine.json'):
 
 	print "Calculating LBI"
 #	calc_LBI(tree)
+
+	print "Calculating geo fitnesses"
+	calc_geo_fitness(tree)
 
 	print "Writing decorated tree"
 	out_fname = "data/tree_predictors.json"

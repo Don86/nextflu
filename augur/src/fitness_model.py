@@ -39,6 +39,8 @@ class fitness_model(object):
 				self.predictors.append(('ne_star',calc_nonepitope_star_distance,{"seasons":self.seasons}))		
 			if p == 'tol':
 				self.predictors.append(('tol',calc_tolerance,{}))
+			if p == 'geo':
+				self.predictors.append(('geo',calc_geo_fitness,{}))				
 
 	def calc_tip_counts(self):
 		'''
@@ -98,7 +100,7 @@ class fitness_model(object):
 
 	def calc_all_predictors(self):
 		self.predictor_arrays={}
-		for node in self.tree.postorder_node_iter():
+		for node in self.tree.leaf_iter():
 			node.predictors = {}
 		for s in self.seasons:
 			tmp_preds = []
@@ -107,16 +109,14 @@ class fitness_model(object):
 			self.select_nodes_in_season(s)
 			self.calc_predictors()
 			if self.verbose: print np.round(time.time()-t0,2), 'seconds'
-			for node in self.tree.postorder_node_iter():
+			for node in self.tree.leaf_iter():
 				if node.alive:
 					node.predictors[s] = np.array([node.__getattribute__(pred[0]) 
-				                              for pred in self.predictors])
-					if node.is_leaf():
-						tmp_preds.append(node.predictors[s])
+											 for pred in self.predictors])					
+					tmp_preds.append(node.predictors[s])
 				else:
 					node.predictors[s]=None
-					if node.is_leaf():
-						tmp_preds.append(np.zeros(len(self.predictors)))
+					tmp_preds.append(np.zeros(len(self.predictors)))
 			self.predictor_arrays[s]=np.array(tmp_preds)
 
 	def standardize_predictors(self):
@@ -131,7 +131,7 @@ class fitness_model(object):
 
 		for s, m in izip(self.seasons, self.season_means):
 			# keep this for internal nodes
-			for node in self.tree.postorder_node_iter():
+			for node in self.tree.leaf_iter():
 				if node.predictors[s] is not None:
 					node.predictors[s] = (node.predictors[s]-m)/self.global_std
 
@@ -231,7 +231,7 @@ class fitness_model(object):
 		if self.verbose: print "calculating predictors for the last season"
 
 		#FIXME: standardize predictors
-		for node in self.tree.postorder_node_iter():
+		for node in self.tree.leaf_iter():
 			if node.predictors[season] is not None:
 				node.fitness = self.fitness(self.params, node.predictors[season])
 			else:
