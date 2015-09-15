@@ -2,20 +2,20 @@ var regions = [
 //generic country codes
 "GUI","GIN","SLE","LIB","LBR",
 // Guinean prefectures
-"Boffa", "Boke", "Fria", "Gaoual", "Koundara", "Conakry", "Dabola",
-"Dinguiraye", "Faranah", "Kissidougou", "Kankan", "Kerouane",
+"Boffa", "Boke", "Fria", "Gaoual", "Koundara", "Conakry",
+"Dabola", "Dinguiraye", "Faranah", "Kissidougou", "Kankan", "Kerouane",
 "Kouroussa", "Mandiana", "Siguiri", "Coyah", "Dubreka", "Forecariah",
-"Kindia", "Telimele", "Koubia", "Labe", "Lelouma", "Mali", "Tougue",
-"Dalaba", "Mamou", "Pita", "Beyla", "Gueckedou", "Lola", "Macenta",
-"Nzerekore", "Yamou",
+"Kindia", "Telimele", "Koubia", "Labe", "Lelouma", "Mali",
+"Tougue", "Dalaba", "Mamou", "Pita", "Beyla", "Gueckedou",
+"Lola", "Macenta", "Nzerekore", "Yamou",
 // Sierra Leonean districts
 "Kailahun", "Kenema", "Kono", "Bombali", "Kambia", "Koinadugu",
 "PortLoko", "Tonkolili", "Bo", "Bonthe", "Moyamba", "Pujehun",
-"WesternRural", "WesternUrban",
+"WesternRural", "WesternUrban", "WesternArea",
 // Liberian counties
 "Nimba", "RiverCess", "RiverGee", "Sinoe", "Bomi", "Bong",
-"Gbapolu", "GrandCapeMount", "GrandBassa", "GrandGedeh",
-"GrandKru", "Lofa", "Margibi", "Maryland", "Montserrado",
+"Gbapolu", "GrandCapeMount", "GrandBassa", "GrandGedeh", "GrandKru", "Lofa",
+"Margibi", "Maryland", "Montserrado",
 ];
 var restrictTo = "all";
 var restrictToLab = "all";

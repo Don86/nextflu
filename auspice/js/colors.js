@@ -17,27 +17,29 @@ var colors = [
 ];
 
 var regionColors = [
-//generic country colors
-"#AAA","#AAA","#AAA","#AAA","#AAA",   
-// proper regions
+// generic country colors
+"#86BB6D", "#86BB6D", "#4041C7", "#E4682F", "#E4682F",   
+// Guinean prefectures
 "#58A2AB", "#56A0AE", "#5BA7A6", "#62AB9C", "#64AC99", "#60AA9F",
 "#84BA70", "#81B973", "#86BB6D", "#95BD61", "#92BC63", "#9EBE5A",
 "#89BB6B", "#8FBC66", "#8CBB68", "#66AE95", "#5DA8A2", "#68AF92",
 "#6AB18F", "#5AA4A8", "#7EB976", "#74B582", "#6FB388", "#71B485",
 "#7CB879", "#77B67F", "#79B77C", "#6CB28C", "#A1BE58", "#98BD5E",
-"#AABD52", "#9BBE5C", "#A4BE56", "#A7BE54", "#4C90C0", "#447ECC",
-"#4272CE", "#691D93", "#781C86", "#4041C7", "#691D93", "#482BB6",
-"#4066CF", "#4041C7", "#4041C7", "#4887C6", "#482BB6", "#691D93",
-
+"#AABD52", "#9BBE5C", "#A4BE56", "#A7BE54", 
+// Sierra Leonean districts
+"#4C90C0", "#447ECC", "#4272CE", "#691D93", "#781C86", "#4041C7", 
+"#691D93", "#482BB6", "#4066CF", "#4041C7", "#4041C7", "#4887C6",
+"#482BB6", "#691D93", "#5824A4",
+// Liberian counties
 "#E67D33", "#E68735", "#E29E39", "#E49838", "#DF4528", "#E4682F",
 "#DC2D24", "#DB2122", "#E67431", "#E69036", "#DFA53B", "#DE3926",
 "#E35C2C", "#DCAB3C", "#E1512A",
 ]
 
 var countryColors = [
-	"#E59637", // Liberia
-	"#80B974", // Guinea
-	"#4A8CC2", // Sierra Leone
+	"#E4682F", // Liberia
+	"#86BB6D", // Guinea
+	"#4041C7", // Sierra Leone
 ]
 
 var genotypeColors = ["#60AA9E", "#D9AD3D", "#5097BA", "#E67030", "#8EBC66", "#E59637", "#AABD52", "#DF4327", "#C4B945", "#75B681"]
@@ -126,7 +128,14 @@ function colorByTrait() {
 	}
 	else if (colorBy == "region") {
 		colorScale = regionColorScale;
-		nodes.map(function(d) { d.coloring = d.region; });
+		nodes.map(function(d) {
+			if (d.region == "Unknown" || d.region == "?") {
+				d.coloring = d.country;
+			}
+			else {
+				d.coloring = d.region;
+			}
+		});
 	}
 	else if (colorBy == "date") {
 		colorScale = dateColorScale;

@@ -16,7 +16,7 @@ sp = 17
 virus_config.update({
 	# data source and sequence parsing/cleaning/processing
 	'virus':'ebola',
-	'fasta_fields':{1:'lab', 2:'strain', 4:'country', 5:'region', 8:'date'},
+	'fasta_fields':{2:'strain', 3:'lab', 4:'country', 5:'region', 8:'date'},
 	#>EBOV|VHFC2|G6091.1|KR105346|SLE|Tonkolili|Tani||2014-09-27
 	#>EBOV|EMLab-RT|EM_COY_2015_013576||GIN|Coyah|?|MinION|2015-03-09
 	'alignment_file':'data/ebola.fasta',
