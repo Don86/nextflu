@@ -128,7 +128,7 @@ class ebola_process(process, ebola_filter, ebola_clean, ebola_refine):
 			# exporting to json, including the H1N1pdm specific fields
 			self.export_to_auspice(tree_fields = ['nuc_muts','accession','isolate_id', 'lab','db', 'country'] 
 													+ self.fasta_fields.values(), 
-			                       annotations = [], export_entropy = 'nuc')
+			                       annotations = [], export_entropy = 'nuc', tree_pop_list = ['freq'])
 			self.generate_indexHTML()
 
 if __name__=="__main__":
