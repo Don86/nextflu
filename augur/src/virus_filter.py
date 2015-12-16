@@ -85,7 +85,7 @@ class virus_filter(object):
 				filtered_viruses.append(v)
 				self.strain_lookup[label]=v
 			else:
-				print "\tduplicate strain: " + v['date']
+				print "\tduplicate strain: " + v['strain']
 		self.viruses = filtered_viruses
 
 	def filter_length(self, min_length):
